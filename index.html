@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ps2app.sh v0.1</title>
+    <title>roms2app.sh v0.1</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0 }
@@ -231,17 +231,17 @@
 
         <section class="hero">
             <span class="badge">Version 0.1</span>
-            <h1><i class="fa-solid fa-gamepad"></i> ps2app.sh</h1>
+            <h1><i class="fa-solid fa-gamepad"></i> roms2app.sh</h1>
             <p>Turn your PlayStation 2 and Nintendo Switch collection into native macOS apps — no emulator hunting, no folder browsing, just play.</p>
             <div class="btns">
-                <a class="btn btn-solid" href="./ps2app.sh" download><i class="fa-solid fa-download"></i> Download Script</a>
+                <a class="btn btn-solid" href="./roms2app.sh" download><i class="fa-solid fa-download"></i> Download Script</a>
                 <a class="btn btn-ghost" href="https://github.com/LuisAugustoMP" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
             </div>
         </section>
 
         <div class="card">
             <h2>Why This Exists</h2>
-            <p>Most Mac gamers open an emulator, dig through folders and hunt for ROM files every single time they want to play. <strong>ps2app.sh</strong> creates lightweight native launchers so your games show up directly in Launchpad, Spotlight and Finder — just like any Mac app.</p>
+            <p>Most Mac gamers open an emulator, dig through folders and hunt for ROM files every single time they want to play. <strong>roms2app.sh</strong> creates lightweight native launchers so your games show up directly in Launchpad, Spotlight and Finder — just like any Mac app.</p>
         </div>
 
         <div class="grid">
@@ -265,11 +265,11 @@
 
         <div class="card">
             <h2><i class="fa-solid fa-microchip" style="margin-right:8px"></i>Recommended Emulators</h2>
-            <p>To play PS2 and Switch games on a Mac, you first need an <strong>emulator</strong> — software that mimics the original hardware so your Mac can run the games. <strong>ps2app.sh</strong> creates the launchers, but the emulators are what actually run the games. Here's what to install:</p>
+            <p>To play PS2 and Switch games on a Mac, you first need an <strong>emulator</strong> — software that mimics the original hardware so your Mac can run the games. <strong>roms2app.sh</strong> creates the launchers, but the emulators are what actually run the games. Here's what to install:</p>
 
             <h3><i class="fa-solid fa-cube" style="margin-right:6px;color:#1a6cf6"></i>PCSX2 — PlayStation 2</h3>
             <p>The gold standard for PS2 emulation. Free, open-source, and actively maintained. On Apple Silicon Macs it runs the vast majority of the PS2 library at full speed. Download the macOS build from the official site.</p>
-            <div class="tip"><i class="fa-solid fa-circle-info" style="margin-right:6px"></i>After installing PCSX2, open it at least once and configure your <strong>BIOS</strong> before using ps2app.sh. The BIOS is a small file extracted from a real PS2 console — it is required for emulation to work.</div>
+            <div class="tip"><i class="fa-solid fa-circle-info" style="margin-right:6px"></i>After installing PCSX2, open it at least once and configure your <strong>BIOS</strong> before using roms2app.sh. The BIOS is a small file extracted from a real PS2 console — it is required for emulation to work.</div>
 
             <h3><i class="fa-solid fa-rocket" style="margin-right:6px;color:#1a6cf6"></i>Astris — Nintendo Switch</h3>
             <p>A newer Switch emulator for macOS with strong Apple Silicon performance. Still in active development but already capable of running many popular titles. Download from the GitHub releases page.</p>
@@ -293,7 +293,7 @@
             <div class="warn"><i class="fa-solid fa-triangle-exclamation" style="margin-right:6px"></i>Only use game files from discs you personally own. Downloading ROMs for games you don't own is illegal.</div>
 
             <h3>Step 3 — Configure the script</h3>
-            <p>Open <code>ps2app.sh</code> in any text editor and adjust the paths at the top of the file to match your setup:</p>
+            <p>Open <code>roms2app.sh</code> in any text editor and adjust the paths at the top of the file to match your setup:</p>
             <pre>SOURCE_DIR_PS2="/Volumes/Games/ps2"
 SOURCE_DIR_SWITCH="/Volumes/Games/nswitch"
 DEST_DIR="/Applications/Games"</pre>
@@ -301,8 +301,8 @@ DEST_DIR="/Applications/Games"</pre>
 
             <h3>Step 4 — Run the script</h3>
             <p>Open <strong>Terminal</strong> (Applications → Utilities, or Spotlight) and run:</p>
-            <pre>chmod +x ps2app.sh
-./ps2app.sh</pre>
+            <pre>chmod +x roms2app.sh
+./roms2app.sh</pre>
             <p>The script will scan your game folders and create a native <code>.app</code> launcher for each game inside <code>/Applications/Games</code>. Your games will appear in Launchpad immediately.</p>
             <div class="tip"><i class="fa-solid fa-circle-info" style="margin-right:6px"></i>You only need to run the script again when you add new games. Existing launchers are skipped automatically.</div>
 

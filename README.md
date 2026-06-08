@@ -1,4 +1,5 @@
-# macOS Game Launcher Generator
+# roms2app
+## A macOS Game Launcher Generator
 
 A bash script that automatically scans an external drive for ROMs (`.iso` for PS2 and `.nsp` for Nintendo Switch) and generates native macOS Application bundles (`.app`) for each game. 
 
