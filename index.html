@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ps2app.sh v0.1</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0 }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #fff;
+            color: #0f1929;
+            overflow-x: hidden
+        }
+
+        #xmb-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(38px) saturate(1.4) opacity(0.55)
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 24px;
+            position: relative;
+            z-index: 1
+        }
+
+        .hero {
+            text-align: center;
+            padding: 100px 20px 80px
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(26,108,246,.10);
+            border: 1px solid rgba(26,108,246,.30);
+            color: #1a6cf6;
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: .8rem;
+            font-weight: 600;
+            letter-spacing: .06em;
+            text-transform: uppercase
+        }
+
+        h1 {
+            font-size: clamp(2.4rem, 6vw, 4rem);
+            margin: 16px 0 12px;
+            color: #0a1628
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #4a6080;
+            max-width: 540px;
+            margin: 0 auto 32px;
+            line-height: 1.65
+        }
+
+        .btns {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap
+        }
+
+        .btn {
+            padding: 13px 24px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: .9rem;
+            transition: transform .15s, box-shadow .2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px
+        }
+        .btn:hover { transform: translateY(-2px) }
+
+        .btn-solid {
+            background: #1a6cf6;
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(26,108,246,.30)
+        }
+        .btn-solid:hover { box-shadow: 0 6px 28px rgba(26,108,246,.50) }
+
+        .btn-ghost {
+            background: rgba(255,255,255,.70);
+            border: 1px solid rgba(0,0,0,.12);
+            color: #1a2a42;
+            backdrop-filter: blur(8px)
+        }
+        .btn-ghost:hover { background: rgba(255,255,255,.90) }
+
+        .card {
+            background: rgba(255,255,255,.72);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(200,218,248,.70);
+            border-radius: 20px;
+            padding: 28px 32px;
+            margin: 20px 0
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 16px
+        }
+        .grid .card { margin: 0 }
+
+        h2 {
+            color: #0a1628;
+            font-size: 1.15rem;
+            margin-bottom: 10px
+        }
+
+        h3 {
+            color: #1a2a42;
+            font-size: .97rem;
+            margin: 22px 0 6px
+        }
+
+        p, li { color: #4a6080; line-height: 1.7; font-size: .95rem }
+
+        strong { color: #1a2a42 }
+        a { color: #1a6cf6 }
+        a:hover { color: #1558d6 }
+
+        ol, ul { padding-left: 1.4rem }
+        li { margin-bottom: 5px }
+
+        code, pre {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: .85rem
+        }
+
+        code {
+            background: rgba(26,108,246,.08);
+            color: #1a6cf6;
+            padding: 2px 8px;
+            border-radius: 6px
+        }
+
+        pre {
+            background: #0f1929;
+            color: #93c5fd;
+            border: 1px solid rgba(26,108,246,.15);
+            border-radius: 12px;
+            padding: 18px;
+            overflow: auto;
+            line-height: 1.65;
+            margin: 14px 0
+        }
+
+        .tip {
+            background: rgba(26,108,246,.06);
+            border-left: 3px solid #1a6cf6;
+            border-radius: 0 10px 10px 0;
+            padding: 12px 16px;
+            margin: 14px 0;
+            color: #4a6080;
+            font-size: .9rem
+        }
+
+        .warn {
+            background: rgba(234,88,12,.06);
+            border-left: 3px solid #ea580c;
+            border-radius: 0 10px 10px 0;
+            padding: 12px 16px;
+            margin: 14px 0;
+            color: #4a6080;
+            font-size: .9rem
+        }
+
+        .roadmap-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(180,200,240,.50)
+        }
+        .roadmap-item:last-child { border-bottom: none }
+
+        .ri-icon {
+            width: 34px; height: 34px;
+            border-radius: 9px;
+            background: rgba(26,108,246,.10);
+            display: flex; align-items: center; justify-content: center;
+            color: #1a6cf6;
+            flex-shrink: 0;
+            font-size: .88rem
+        }
+
+        .ri-label { font-weight: 600; color: #1a2a42; font-size: .9rem }
+        .ri-sub { font-size: .82rem; color: #4a6080; margin-top: 3px }
+
+        .ri-pill {
+            margin-left: auto;
+            font-size: .72rem;
+            font-weight: 700;
+            padding: 3px 11px;
+            border-radius: 999px;
+            white-space: nowrap;
+            align-self: center
+        }
+        .pill-blue  { background: rgba(26,108,246,.12); color: #1a6cf6 }
+        .pill-green { background: rgba(22,163,74,.12);  color: #16a34a }
+
+        footer {
+            text-align: center;
+            padding: 50px 20px
+        }
+        footer p { color: #8aa0be; font-size: .88rem; margin: 4px 0 }
+        footer strong { color: #4a6080 }
+        footer a { color: #1a6cf6 }
+    </style>
+</head>
+
+<body>
+    <canvas id="xmb-canvas"></canvas>
+
+    <div class="container">
+
+        <section class="hero">
+            <span class="badge">Version 0.1</span>
+            <h1><i class="fa-solid fa-gamepad"></i> ps2app.sh</h1>
+            <p>Turn your PlayStation 2 and Nintendo Switch collection into native macOS apps — no emulator hunting, no folder browsing, just play.</p>
+            <div class="btns">
+                <a class="btn btn-solid" href="./ps2app.sh" download><i class="fa-solid fa-download"></i> Download Script</a>
+                <a class="btn btn-ghost" href="https://github.com/LuisAugustoMP" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
+            </div>
+        </section>
+
+        <div class="card">
+            <h2>Why This Exists</h2>
+            <p>Most Mac gamers open an emulator, dig through folders and hunt for ROM files every single time they want to play. <strong>ps2app.sh</strong> creates lightweight native launchers so your games show up directly in Launchpad, Spotlight and Finder — just like any Mac app.</p>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2><i class="fa-solid fa-bolt" style="margin-right:8px;color:#1a6cf6"></i>Automatic Detection</h2>
+                <p>Scans your PS2 and Switch libraries automatically — no manual configuration per game.</p>
+            </div>
+            <div class="card">
+                <h2><i class="fa-solid fa-desktop" style="margin-right:8px;color:#1a6cf6"></i>Native Experience</h2>
+                <p>Launch games like regular Mac apps directly from Launchpad or Spotlight.</p>
+            </div>
+            <div class="card">
+                <h2><i class="fa-solid fa-copy" style="margin-right:8px;color:#1a6cf6"></i>Safe Re-Runs</h2>
+                <p>Already created launchers are skipped automatically — add new games anytime.</p>
+            </div>
+            <div class="card">
+                <h2><i class="fa-solid fa-hard-drive" style="margin-right:8px;color:#1a6cf6"></i>External Drives</h2>
+                <p>Designed for large libraries stored on external drives — nothing is copied or moved.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fa-solid fa-microchip" style="margin-right:8px"></i>Recommended Emulators</h2>
+            <p>To play PS2 and Switch games on a Mac, you first need an <strong>emulator</strong> — software that mimics the original hardware so your Mac can run the games. <strong>ps2app.sh</strong> creates the launchers, but the emulators are what actually run the games. Here's what to install:</p>
+
+            <h3><i class="fa-solid fa-cube" style="margin-right:6px;color:#1a6cf6"></i>PCSX2 — PlayStation 2</h3>
+            <p>The gold standard for PS2 emulation. Free, open-source, and actively maintained. On Apple Silicon Macs it runs the vast majority of the PS2 library at full speed. Download the macOS build from the official site.</p>
+            <div class="tip"><i class="fa-solid fa-circle-info" style="margin-right:6px"></i>After installing PCSX2, open it at least once and configure your <strong>BIOS</strong> before using ps2app.sh. The BIOS is a small file extracted from a real PS2 console — it is required for emulation to work.</div>
+
+            <h3><i class="fa-solid fa-rocket" style="margin-right:6px;color:#1a6cf6"></i>Astris — Nintendo Switch</h3>
+            <p>A newer Switch emulator for macOS with strong Apple Silicon performance. Still in active development but already capable of running many popular titles. Download from the GitHub releases page.</p>
+            <div class="tip"><i class="fa-solid fa-circle-info" style="margin-right:6px"></i>Switch emulation also requires <strong>keys and firmware</strong> dumped from a real Nintendo Switch console. Astris will guide you through the setup on first launch.</div>
+
+            <div class="btns" style="margin-top:22px">
+                <a class="btn btn-solid" target="_blank" href="https://pcsx2.net"><i class="fa-solid fa-cube"></i> Download PCSX2</a>
+                <a class="btn btn-solid" target="_blank" href="https://github.com/V380-Ori/Astris.Binaries/releases"><i class="fa-solid fa-rocket"></i> Download Astris</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fa-solid fa-flag-checkered" style="margin-right:8px"></i>Getting Started</h2>
+            <p>Follow these steps in order. If this is your first time doing emulation on Mac, read each note carefully.</p>
+
+            <h3>Step 1 — Install the emulators</h3>
+            <p>Download and install <a href="https://pcsx2.net" target="_blank">PCSX2</a> for PS2 and/or <a href="https://github.com/V380-Ori/Astris.Binaries/releases" target="_blank">Astris</a> for Switch. Launch each one at least once and complete the initial setup (BIOS for PCSX2, keys + firmware for Astris).</p>
+
+            <h3>Step 2 — Organise your game files</h3>
+            <p>Store your game files (ROMs) on an external drive or in a dedicated folder. The script expects PS2 games in a <code>/ps2</code> folder and Switch games in <code>/nswitch</code>. Supported formats: <code>.iso</code> for PS2, <code>.nsp</code> / <code>.xci</code> for Switch.</p>
+            <div class="warn"><i class="fa-solid fa-triangle-exclamation" style="margin-right:6px"></i>Only use game files from discs you personally own. Downloading ROMs for games you don't own is illegal.</div>
+
+            <h3>Step 3 — Configure the script</h3>
+            <p>Open <code>ps2app.sh</code> in any text editor and adjust the paths at the top of the file to match your setup:</p>
+            <pre>SOURCE_DIR_PS2="/Volumes/Games/ps2"
+SOURCE_DIR_SWITCH="/Volumes/Games/nswitch"
+DEST_DIR="/Applications/Games"</pre>
+            <p>Replace the example paths with the actual locations on your Mac. Drive names and folder names are case-sensitive.</p>
+
+            <h3>Step 4 — Run the script</h3>
+            <p>Open <strong>Terminal</strong> (Applications → Utilities, or Spotlight) and run:</p>
+            <pre>chmod +x ps2app.sh
+./ps2app.sh</pre>
+            <p>The script will scan your game folders and create a native <code>.app</code> launcher for each game inside <code>/Applications/Games</code>. Your games will appear in Launchpad immediately.</p>
+            <div class="tip"><i class="fa-solid fa-circle-info" style="margin-right:6px"></i>You only need to run the script again when you add new games. Existing launchers are skipped automatically.</div>
+
+            <h3>Step 5 — App icons</h3>
+            <p>After the script finishes, your game launchers will display a <strong>generic white icon</strong>. Automatic icon fetching is not yet part of the script — it's coming in a future update. Until then, you can apply custom icons manually in seconds:</p>
+            <ol>
+                <li>Go to <a href="https://macosicons.com" target="_blank">macosicons.com</a> and search for your game title.</li>
+                <li>Download the <code>.icns</code> file.</li>
+                <li>In Finder, right-click the <code>.app</code> inside <code>/Applications/Games</code> and choose <strong>Get Info</strong>.</li>
+                <li>Drag the <code>.icns</code> file onto the small icon thumbnail in the top-left corner of the Get Info window.</li>
+                <li>Done — the icon updates immediately in Launchpad and Finder.</li>
+            </ol>
+            <div class="tip"><i class="fa-solid fa-circle-info" style="margin-right:6px"></i>Automatic icon assignment is planned for a future release — the script will handle this step entirely on its own.</div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fa-solid fa-folder-tree" style="margin-right:8px"></i>Folder Structure Example</h2>
+            <p>Organise your game drive like this so the script finds everything automatically:</p>
+            <pre>Games Drive
+├── ps2
+│   ├── Gran Turismo 4.iso
+│   └── Shadow of the Colossus.iso
+└── nswitch
+    ├── Mario Kart 8 Deluxe.nsp
+    └── The Legend of Zelda Tears of the Kingdom.xci</pre>
+        </div>
+
+        <div class="card">
+            <h2><i class="fa-solid fa-circle-question" style="margin-right:8px"></i>FAQ</h2>
+            <p><strong>Do I need to run the script every time I want to play?</strong><br>No. Only run it again when you add new games to your library.</p>
+            <p style="margin-top:12px"><strong>Does the script copy or move my game files?</strong><br>No. Your ROMs stay exactly where they are. The script only creates small launcher files.</p>
+            <p style="margin-top:12px"><strong>Can I search for games via Spotlight?</strong><br>Yes. The launchers behave like regular macOS apps and are fully indexed by Spotlight.</p>
+            <p style="margin-top:12px"><strong>My external drive isn't always connected — will the launchers break?</strong><br>The launchers will show an error if the drive isn't mounted. Just connect the drive first and try again.</p>
+        </div>
+
+        <div class="card">
+            <h2><i class="fa-solid fa-map" style="margin-right:8px"></i>Roadmap</h2>
+            <p>Here's what's coming. The goal is to support any emulator that runs well on macOS — more platforms are on the way.</p>
+            <div style="margin-top:18px">
+                <div class="roadmap-item">
+                    <div class="ri-icon"><i class="fa-solid fa-image"></i></div>
+                    <div>
+                        <div class="ri-label">Automatic custom game icons</div>
+                        <div class="ri-sub">Script will fetch and apply icons automatically from macosicons.com.</div>
+                    </div>
+                    <span class="ri-pill pill-blue">v0.2</span>
+                </div>
+                <div class="roadmap-item">
+                    <div class="ri-icon"><i class="fa-solid fa-gamepad"></i></div>
+                    <div>
+                        <div class="ri-label">PlayStation 1 support</div>
+                        <div class="ri-sub">PS1 library detection and launcher creation — the next platform to be added.</div>
+                    </div>
+                    <span class="ri-pill pill-green">Next</span>
+                </div>
+                <div class="roadmap-item">
+                    <div class="ri-icon"><i class="fa-solid fa-palette"></i></div>
+                    <div>
+                        <div class="ri-label">Artwork &amp; metadata</div>
+                        <div class="ri-sub">Game cover art, release year and genre pulled automatically.</div>
+                    </div>
+                    <span class="ri-pill pill-blue">v0.3</span>
+                </div>
+                <div class="roadmap-item">
+                    <div class="ri-icon"><i class="fa-solid fa-layer-group"></i></div>
+                    <div>
+                        <div class="ri-label">Additional platforms</div>
+                        <div class="ri-sub">GameCube, Wii, and more — wherever good macOS emulators exist.</div>
+                    </div>
+                    <span class="ri-pill pill-blue">Future</span>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>Created by Luis Augusto</strong></p>
+            <p>Personal automation project for Mac gamers.</p>
+            <p style="margin-top:8px"><a href="https://github.com/LuisAugustoMP">github.com/LuisAugustoMP</a></p>
+        </footer>
+
+    </div>
+
+    <script>
+    const canvas = document.getElementById('xmb-canvas');
+    const ctx    = canvas.getContext('2d');
+    let W, H, t = 0;
+
+    const WAVES = [
+        { amp:.11, freq:.8,  speed:.20, phase:0,    hueBase:200, hueRange:25, alpha:.80, thick:.10, cy:.18 },
+        { amp:.09, freq:1.2, speed:.16, phase:1.3,  hueBase:225, hueRange:35, alpha:.75, thick:.09, cy:.32 },
+        { amp:.10, freq:.6,  speed:.24, phase:2.7,  hueBase:185, hueRange:30, alpha:.75, thick:.10, cy:.47 },
+        { amp:.08, freq:1.6, speed:.13, phase:0.8,  hueBase:255, hueRange:30, alpha:.75, thick:.08, cy:.60 },
+        { amp:.09, freq:1.0, speed:.19, phase:3.5,  hueBase:170, hueRange:40, alpha:.70, thick:.09, cy:.73 },
+        { amp:.07, freq:2.0, speed:.11, phase:1.9,  hueBase:280, hueRange:25, alpha:.65, thick:.07, cy:.87 },
+    ];
+
+    const PARTICLES = [];
+    const PARTICLE_COUNT = 220;
+
+    function makeParticle() {
+        const wi = Math.floor(Math.random() * WAVES.length);
+        return {
+            wi,
+            x:         Math.random() * 1.4 - 0.2,
+            speed:     0.012 + Math.random() * 0.022,
+            offset:    (Math.random() - 0.5) * 0.06,
+            size:      0.8 + Math.random() * 2.2,
+            life:      Math.random(),
+            lifeSpeed: 0.003 + Math.random() * 0.006,
+            bright:    0.6 + Math.random() * 0.4
+        };
+    }
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) PARTICLES.push(makeParticle());
+
+    function waveY(wave, nx, time) {
+        return H * wave.cy
+             + Math.sin(nx * wave.freq * Math.PI * 2 + time * wave.speed + wave.phase) * H * wave.amp
+             + Math.sin(nx * wave.freq * 0.45 * Math.PI * 2 - time * wave.speed * 0.6 + wave.phase + 1) * H * wave.amp * 0.35;
+    }
+
+    function drawWave(w, time) {
+        const hue  = (w.hueBase + Math.sin(time * 0.12 + w.phase) * w.hueRange) % 360;
+        const hue2 = (hue + 45) % 360;
+        const th   = H * w.thick;
+
+        ctx.beginPath();
+        for (let px = 0; px <= W; px += 3) {
+            const y = waveY(w, px / W, time);
+            px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
+        }
+        for (let px = W; px >= 0; px -= 3) ctx.lineTo(px, waveY(w, px / W, time) + th);
+        ctx.closePath();
+
+        const cy = H * w.cy;
+        const g  = ctx.createLinearGradient(0, cy - H * w.amp - th, 0, cy + H * w.amp + th * 2);
+        g.addColorStop(0,    `hsla(${hue},  100%, 62%, 0)`);
+        g.addColorStop(0.25, `hsla(${hue},  100%, 55%, ${w.alpha * 0.7})`);
+        g.addColorStop(0.5,  `hsla(${hue2}, 100%, 65%, ${w.alpha})`);
+        g.addColorStop(0.75, `hsla(${hue},  100%, 50%, ${w.alpha * 0.7})`);
+        g.addColorStop(1,    `hsla(${hue},  100%, 48%, 0)`);
+        ctx.fillStyle = g;
+        ctx.fill();
+
+        ctx.beginPath();
+        for (let px = 0; px <= W; px += 3) {
+            const y = waveY(w, px / W, time);
+            px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
+        }
+        ctx.strokeStyle = `hsla(${hue2}, 100%, 75%, ${w.alpha * 0.45})`;
+        ctx.lineWidth   = 1.5;
+        ctx.stroke();
+    }
+
+    function drawParticles(time) {
+        for (const p of PARTICLES) {
+            p.x    += p.speed * 0.001;
+            p.life += p.lifeSpeed;
+            if (p.x > 1.2 || p.life > 1) {
+                Object.assign(p, makeParticle());
+                p.x = -0.05; p.life = 0;
+            }
+            const w    = WAVES[p.wi];
+            const py   = waveY(w, p.x, time) + p.offset * H;
+            const px   = p.x * W;
+            const fade = Math.sin(p.life * Math.PI);
+            if (fade < 0.01) continue;
+            const hue = (w.hueBase + Math.sin(time * 0.12 + w.phase) * w.hueRange + 20) % 360;
+            ctx.beginPath();
+            ctx.arc(px, py, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${hue}, 100%, ${55 + p.bright * 15}%, ${fade * w.alpha * 0.90})`;
+            ctx.fill();
+        }
+    }
+
+    function draw(ts) {
+        t = ts * 0.001;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, W, H);
+        for (const w of WAVES) drawWave(w, t);
+        drawParticles(t);
+        requestAnimationFrame(draw);
+    }
+
+    function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+    requestAnimationFrame(draw);
+    </script>
+</body>
+</html>
